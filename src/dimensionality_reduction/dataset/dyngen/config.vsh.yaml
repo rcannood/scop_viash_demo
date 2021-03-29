@@ -1,0 +1,46 @@
+functionality:
+  name: dyngen
+  namespace: "dimensionality_reduction/dataset"
+  version: "dev"
+  description: "Generates a dataset with dyngen."
+  authors:
+    - name: Robrecht Cannoodt
+      email: RCannoo1@its.jnj.com
+      roles: [ maintainer ]
+      props: { account: rcannoo1 }
+  arguments:
+    - name: "--input"
+      alternatives: ["-i"]
+      type: file
+      description: Dummy parameter
+      default: test
+      required: false
+    - name: "--backbone"
+      alternatives: ["-b"]
+      type: string
+      description: Backbone type
+      default: trifurcating
+    - name: "--output"
+      alternatives: ["-o"]
+      type: file
+      description: Output h5ad file.
+      direction: output
+      required: true
+  resources:
+    - type: r_script
+      path: ./script.R
+  tests:
+    - type: python_script
+      path: run_test.py
+platforms:
+  - type: docker
+    image: "dataintuitive/randpy:r4.0_py3.8_bioc3.12"
+    setup:
+      - type: python
+        packages: 
+          - anndata
+      - type: r
+        cran:
+          - dyngen
+          - anndata
+  - type: nextflow

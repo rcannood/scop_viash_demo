@@ -1,0 +1,35 @@
+functionality:
+  name: rmse
+  namespace: "dimensionality_reduction/metric"
+  version: "dev"
+  description: "Compare a dimensionality reduction to the original expression matrix"
+  authors:
+    - name: Robrecht Cannoodt
+      email: RCannoo1@its.jnj.com
+      roles: [ maintainer ]
+      props: { account: rcannoo1 }
+  arguments:
+    - name: "--input"
+      alternatives: ["-i"]
+      type: file
+      description: Input h5ad file
+      direction: input
+      required: true
+    - name: "--output"
+      alternatives: ["-o"]
+      type: file
+      description: Output h5ad file.
+      direction: output
+      required: true
+  resources:
+    - type: r_script
+      path: ./script.R
+platforms:
+  - type: docker
+    image: "dataintuitive/randpy:r4.0_bioc3.12"
+    setup:
+      - type: r
+        cran:
+          - anndata
+          - dynutils
+  - type: nextflow
