@@ -1,0 +1,42 @@
+functionality:
+  name: tenx_dataset
+  namespace: "dimensionality_reduction/dataset"
+  version: "dev"
+  description: |
+    Download a dataset from the 10x genomics website.
+
+    Example:
+      fetch_10x_dataset \
+        --input https://cf.10xgenomics.com/samples/cell-exp/3.0.0/pbmc_1k_protein_v3/pbmc_1k_protein_v3_raw_feature_bc_matrix.h5 \
+        --min_library_size 1000 --min_cells_per_gene 300
+  authors:
+    - name: Robrecht Cannoodt
+      email: RCannoo1@its.jnj.com
+      roles: [ maintainer ]
+      props: { account: rcannoo1 }
+  arguments:
+    - name: "--input"
+      alternatives: ["-i"]
+      type: string
+      description: "Location URL to an h5 file from the 10x genomics website."
+      required: true
+    - name: "--output"
+      alternatives: ["-o"]
+      type: file
+      default: "${VIASH_PAR_INPUT##*/}"
+      direction: output
+      description: Output h5 file.
+  resources:
+    - type: r_script
+      path: script.R
+  tests:
+    - type: r_script
+      path: test/run_test.R
+platforms:
+  - type: docker
+    image: dataintuitive/randpy:r4.0_py3.8_bioc3.12
+    setup:
+      - type: python
+        packages:
+          - scanpy
+  - type: nextflow

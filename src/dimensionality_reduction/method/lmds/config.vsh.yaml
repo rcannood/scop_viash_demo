@@ -1,0 +1,48 @@
+functionality:
+  name: lmds
+  namespace: "dimensionality_reduction/method"
+  version: "dev"
+  description: " Landmark MDS. A fast dimensionality reduction method scaleable to large numbers of samples. Landmark Multi-Dimensional Scaling (LMDS) is an extension of classical 'Torgerson MDS', but rather than calculating a complete distance matrix between all pairs of samples, only the distances between a set of landmarks and the samples are calculated."
+  authors:
+    - name: Robrecht Cannoodt
+      email: RCannoo1@its.jnj.com
+      roles: [ maintainer ]
+      props: { account: rcannoo1 }
+  arguments:
+    - name: "--input"
+      alternatives: ["-i"]
+      type: file
+      description: Input h5ad file
+      direction: input
+      required: true
+    - name: "--output"
+      alternatives: ["-o"]
+      type: file
+      description: Output h5ad file.
+      direction: output
+      required: true
+    - name: "--ndim"
+      type: integer
+      description: "The number of dimensions"
+      default: 3
+    - name: "--distance_method"
+      type: string
+      description: "The distance metric to use. Options are 'euclidean', 'pearson', 'spearman', 'cosine', and 'manhattan'."
+      default: "pearson"
+  resources:
+    - type: r_script
+      path: ./script.R
+  tests:
+    - type: bash_script
+      path: run_test.sh
+    - path: ../../../../resources/test_files/dyngen_dataset.h5ad
+platforms:
+  - type: docker
+    image: "dataintuitive/randpy:r4.0_bioc3.12"
+    setup:
+      - type: r
+        cran:
+          - anndata
+          - dynutils
+          - lmds
+  - type: nextflow

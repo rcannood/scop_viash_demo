@@ -2,7 +2,7 @@ functionality:
   name: pca
   namespace: "dimensionality_reduction/method"
   version: "dev"
-  description: Performs PCA on the highly variable genes
+  description: Performs PCA
   authors:
     - name: Dries De Maeyer
       email: DDeMaey1@its.jnj.com
@@ -18,14 +18,14 @@ functionality:
     - name: "--output"
       alternatives: ["-o"]
       type: file
-      description: Output h5ad file containing the dimred object.
+      description: Output h5ad file
       direction: output
       required: true
-    - name: "--nPCs"
+    - name: "--n_comps"
       alternatives: ["-n"]
       type: integer
       default: 25
-      description: The number of principal components to calculate.
+      description: The number of PCs to compute
   resources:
     - type: python_script
       path: ./script.py
