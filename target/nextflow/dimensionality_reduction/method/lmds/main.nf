@@ -30,13 +30,13 @@ def effectiveContainer(processParams) {
 def outFromIn(files) {
     if (files in List || files in HashMap) {
         // We're in join mode, files is List[String]
-        return "dist_rmse" + "." + extension
+        return "lmds" + "." + extension
     } else {
         // files filename is just a String
         def splitString = files.split(/\./)
         def prefix = splitString.head()
         def extension = splitString.last()
-        return prefix + "." + "dist_rmse" + "." + extension
+        return prefix + "." + "lmds" + "." + extension
     }
 }
 
@@ -84,7 +84,7 @@ def overrideOutput(params, str) {
 }
 
 
-process dist_rmse_process {
+process lmds_process {
   
   tag "${id}"
   echo { (params.debug == true) ? true : false }
@@ -105,7 +105,7 @@ process dist_rmse_process {
         echo Nothing before
         # Adding NXF's `$moduleDir` to the path in order to resolve our own wrappers
         export PATH="./:${moduleDir}:\$PATH"
-        ./${params.dist_rmse.tests.testScript} | tee $output
+        ./${params.lmds.tests.testScript} | tee $output
         """
     else
         """
@@ -119,14 +119,14 @@ process dist_rmse_process {
         """
 }
 
-workflow dist_rmse {
+workflow lmds {
 
     take:
     id_input_params_
 
     main:
 
-    def key = "dist_rmse"
+    def key = "lmds"
 
     def id_input_output_function_cli_ =
         id_input_params_.map{ id, input, _params ->
@@ -158,7 +158,7 @@ workflow dist_rmse {
                 renderCLI([updtParams2.command], updtParams2.arguments)
             )
         }
-    result_ = dist_rmse_process(id_input_output_function_cli_) \
+    result_ = lmds_process(id_input_output_function_cli_) \
         | join(id_input_params_) \
         | map{ id, output, input, original_params ->
             new Tuple3(id, output, original_params)
@@ -174,7 +174,7 @@ workflow {
    def id = params.id
    def ch_ = Channel.fromPath(params.input).map{ s -> new Tuple3(id, s, params)}
 
-   dist_rmse(ch_)
+   lmds(ch_)
 }
 
 workflow test {
@@ -184,17 +184,17 @@ workflow test {
 
    main:
    params.test = true
-   params.dist_rmse.output = "dist_rmse.log"
+   params.lmds.output = "lmds.log"
 
    Channel.from(rootDir) \
-        | filter { params.dist_rmse.tests.isDefined } \
+        | filter { params.lmds.tests.isDefined } \
         | map{ p -> new Tuple3(
                     "tests",
-                    params.dist_rmse.tests.testResources.collect{ file( p + it ) },
+                    params.lmds.tests.testResources.collect{ file( p + it ) },
                     params
                 )} \
-        | dist_rmse
+        | lmds
 
     emit:
-    dist_rmse.out
+    lmds.out
 }

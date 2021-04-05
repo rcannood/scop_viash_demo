@@ -560,5 +560,5 @@ info:
   output: "target/nextflow/dimensionality_reduction/dataset/dyngen"
   executable: "target/nextflow/dimensionality_reduction/dataset/dyngen/dyngen"
   viash_version: "0.4.0-rc1"
-  git_commit: "1b981718f8370d56b7a29dd27500b17a0d7cf2ab"
+  git_commit: "d9e9ac9c11d4a4bd76d6fa485a91517feafe6f03"
   git_remote: "git@github.com:rcannood/scop_viash_demo.git"
