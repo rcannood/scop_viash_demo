@@ -107,7 +107,7 @@ function ViashHelp {
     echo "        Log file"
     echo ""
     echo "    --viash=file"
-    echo "        type: file, default: bin/viash"
+    echo "        type: file"
     echo "        A path to the viash executable. If not specified, this component will look for 'viash' on the \$PATH."
     echo ""
 }
@@ -276,9 +276,6 @@ if [ -z "$VIASH_PAR_NO_CACHE" ]; then
 fi
 if [ -z "$VIASH_PAR_LOG" ]; then
   VIASH_PAR_LOG="log.txt"
-fi
-if [ -z "$VIASH_PAR_VIASH" ]; then
-  VIASH_PAR_VIASH="bin/viash"
 fi
 
 

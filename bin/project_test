@@ -102,8 +102,12 @@ function ViashHelp {
     echo "        type: file, default: log.tsv"
     echo "        Test log file"
     echo ""
+    echo "    --append=boolean"
+    echo "        type: boolean, default: true"
+    echo "        Append to the log file?"
+    echo ""
     echo "    --viash=file"
-    echo "        type: file, default: bin/viash"
+    echo "        type: file"
     echo "        A path to the viash executable. If not specified, this component will look for 'viash' on the \$PATH."
     echo ""
 }
@@ -216,6 +220,14 @@ while [[ $# -gt 0 ]]; do
             VIASH_PAR_LOG="$2"
             shift 2
             ;;
+        --append)
+            VIASH_PAR_APPEND="$2"
+            shift 2
+            ;;
+        --append=*)
+            VIASH_PAR_APPEND=$(ViashRemoveFlags "$1")
+            shift 1
+            ;;
         --viash)
             VIASH_PAR_VIASH="$2"
             shift 2
@@ -259,8 +271,8 @@ fi
 if [ -z "$VIASH_PAR_LOG" ]; then
   VIASH_PAR_LOG="log.tsv"
 fi
-if [ -z "$VIASH_PAR_VIASH" ]; then
-  VIASH_PAR_VIASH="bin/viash"
+if [ -z "$VIASH_PAR_APPEND" ]; then
+  VIASH_PAR_APPEND="true"
 fi
 
 
@@ -281,6 +293,7 @@ par_query_name='$VIASH_PAR_QUERY_NAME'
 par_version='$VIASH_PAR_VERSION'
 par_registry='$VIASH_PAR_REGISTRY'
 par_log='$VIASH_PAR_LOG'
+par_append='$VIASH_PAR_APPEND'
 par_viash='$VIASH_PAR_VIASH'
 
 resources_dir="$VIASH_RESOURCES_DIR"
@@ -303,6 +316,11 @@ if [ -z "\$par_viash" ]; then
   par_viash="viash"
 fi
 
+# if --append (-a) true is specified, add \`--append\`
+if [ "\$par_append" == "true" ]; then
+  par_append_parsed="--append"
+fi
+
 if [ "\$par_mode" == "development" ]; then
   echo "In development mode..."
   "\$par_viash" ns test \\
@@ -313,7 +331,8 @@ if [ "\$par_mode" == "development" ]; then
     -c '.functionality.version := "dev"' \\
     -c '.platforms[.type == "docker"].setup_strategy := "donothing"' \\
     -l \\
-    -t "\$par_log"
+    -t "\$par_log" \\
+    \$par_append_parsed
 elif [ "\$par_mode" == "integration" ]; then
   echo "In integration mode..."
   "\$par_viash" ns test \\
@@ -326,7 +345,8 @@ elif [ "\$par_mode" == "integration" ]; then
     -c '.platforms[.type == "docker"].setup_strategy := "donothing"' \\
     -c '.platforms[.type == "nextflow"].registry := "'"\$par_registry"'"' \\
     -l \\
-    -t "\$par_log"
+    -t "\$par_log" \\
+    \$par_append_parsed
 elif [ "\$par_mode" == "release" ]; then
   echo "In release mode..."
   if [ "\$par_version" == "dev" ]; then
@@ -343,7 +363,8 @@ elif [ "\$par_mode" == "release" ]; then
     -c '.platforms[.type == "docker"].setup_strategy := "pull"' \\
     -c '.platforms[.type == "nextflow"].registry := "'"\$par_registry"'"' \\
     -l \\
-    -t "\$par_log"
+    -t "\$par_log" \\
+    \$par_append_parsed
 else
   echo "Not a valid mode argument"
 fi
